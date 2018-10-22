@@ -1,0 +1,314 @@
+<!doctype html5>
+<html>
+
+<head>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.auth0.com/js/auth0/9.5.1/auth0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/3.0.1/vue-router.min.js"></script>
+    <!-- Buefy CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/buefy@0.6.7/dist/buefy.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css" />
+    <script src="https://unpkg.com/http-vue-loader"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <!-- Buefy JavaScript -->
+    <script>
+        var socket = io("socket.ferox.host");
+    </script>
+    <script src="https://unpkg.com/buefy"></script>
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.0.46/css/materialdesignicons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ansi_up@3.0.0/ansi_up.min.js"></script>
+    
+    <script>
+        var ansi_up = new AnsiUp;
+        var homecomp;
+        var accountcomp;
+        var ip = ""
+    </script>
+    <script src="https://botpanel.ferox.host/templates/authutils.js"></script>
+    <script>
+
+
+socket.on('igns', function(msg){
+
+//console.log(msg);
+if(msg.length == 0){
+    app.$data.bots = [];
+}
+for(bot in msg){
+    if(app.$data.bots.findIndex(x => x.name==msg[bot]) === -1){
+app.$data.bots.push({"name": msg[bot], "token": "null"});
+}
+    
+    
+}
+});
+function refreshbots() {
+
+//app.$data.bots = [];
+socket.emit('names');
+
+
+axios.get('/api/ip')
+  .then(function (response) {
+    // handle success
+   // console.log(response.data);
+    ip = response.data;
+    try{
+        $('#ip').attr('placeholder', ip);
+    }catch(err){
+        console.log(err);
+    }
+  })
+
+    };
+setInterval(function(){ refreshbots(); }, 1500);
+
+        socket.on('chatc', function(msg){
+            console.log("msg.u: " + msg.username)
+         // console.log(username);
+        //  $('#messages').append($('<li>').append(ansi_up.ansi_to_html(msg)));
+    //    if (msg.username == getusername())
+         try{
+            $('#messages').append("<li>" + ansi_up.ansi_to_html(msg.message) + "</li>"); 
+         document.getElementById('chatbox').scrollTo(0, document.getElementById('chatbox').scrollHeight);
+         }
+         catch(err){
+            console.log(err);
+        }
+        });
+
+https://botpanel.feroxmc.ga/
+       function setip() {
+            socket.emit('setip', $('#ip').val());
+            console.log("msg out: " + $('#ip').val())
+            $('#ip').val('');
+            return true;
+        }
+       function sendglobal() {
+            socket.emit('chat', {"message": $('#m').val(), "token": "", "username": "all"});
+            console.log("msg out: " + "all")
+            $('#m').val('');
+            return true;
+        }
+       function setjoincommand() {
+            socket.emit('joincommand', '/play factions');
+            return true;
+        }
+       function sendmsg() {
+            socket.emit('chat', {"message": $('#m').val(), "token": "", "username": app.$route.params.username});
+            console.log("msg out: " + app.$route.params.username)
+            $('#m').val('');
+            return true;
+        }
+function keydownmsg(e){
+	if(e.keyCode == 13){
+sendmsg()
+			}
+}
+
+        function jump() {
+            socket.emit('jump', $('#m').val());
+            // $('#m').val('');
+            return true;
+        }
+        function getusername(){
+return location.pathname.match(/\/account\/(.*)/)[1];
+}
+
+
+function restartbots(){
+
+swal({
+  title: "Are you sure?",
+  text: "Once restarted, the bots might not return!",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+
+    socket.emit("restart");
+    swal("Poof! The bots have been restarted.", {
+      icon: "success",
+    });
+
+
+  } else {
+  }
+});
+
+}
+    </script>
+
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        Vue.use(Buefy.default);
+        //	document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>');
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        html {
+            /*	background-color: #4a4a4a;
+		text-decoration-color: 
+		color: hsl(0, 0%, 21%);*/
+        }
+        
+        #appsec {
+            margin-top: 3.25rem;
+        }
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+        
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <div class="navbar-item">
+                    <img src="https://material.io/tools/icons/static/icons/baseline-android-24px.svg">
+                    <span class="site-name is-size-7 is-uppercase has-text-weight-bold">BotPanel v2</span>
+                </div>
+              <!--  <div class="navbar-menu">
+                    <div class="navbar-end is-size-7 is-uppercase has-text-weight-bold">
+                        <div class="navbar-item">
+                            <router-link to="/home">home</router-link>
+
+                        </div>
+                        <div v-if="isAuthenticated() == false" class="navbar-item">
+                            <router-link to="/login">login</router-link>
+                        </div>
+                    </div>
+                </div>-->
+                    <div class="navbar-item">
+
+<router-link to="/home">home</router-link>
+</div>
+                <div v-if="$route.params.username != undefined" class="navbar-section navbar-end" style="float: right">
+                
+
+<div class="navbar-item is-size-7 is-uppercase has-text-weight-bold">
+	            <b-icon
+                icon="account"
+                size="is-huge">
+            </b-icon> {{ $route.params.username }}
+
+        </div>
+        </div>
+        <div class="navbar-item is-size-7 is-uppercase has-text-weight-bold">
+<button class="button is-primary" onclick='restartbots()'>restart bot</button>
+</div>
+        
+                
+
+        </nav>
+
+        <section id="appsec" class="mainbody">
+
+            <transition name="fade">
+            <router-view></router-view>
+</transition>
+        </section>
+        <footer class="footer is-uppercase is-fixed-bottom">
+            <div class="categories footer-section is-size-6">
+                &copy Wqrld 2018
+
+            </div>
+
+        </footer>
+        </div>
+
+
+
+
+        <script>
+
+if(isAuthenticated()){
+	 homecomp = httpVueLoader('/templates/home.vue')
+	 accountcomp = httpVueLoader('/templates/account.vue')
+}else{
+             homecomp = {
+                template: '<div>Please log in</div>'
+            }
+                         accountcomp = {
+                template: '<div>Please log in</div>'
+            }
+}
+
+            const account = {
+                template: '<div>account {{ $route.params.username }} </div>'
+            }
+            const home = {
+                template: '<div>not sure if you are logged in</div>'
+            }
+            const routes = [{
+                path: '/account/:username',
+                props: true,
+                component: accountcomp,
+                beforeEnter: (to, from, next) => {
+                    console.log("went from" + from + "to " + to);
+                           /* function sendmsg() {
+            socket.emit('chat', {"message": $('#m').val(), "token": "", "username": "di"});
+            console.log(app.$route.params.username)
+            $('#m').val('');
+            return true;
+*/next()
+        }
+        
+            }, {
+                path: '/login',
+                component: httpVueLoader('/templates/login.vue')
+            }, {
+                path: '/home',
+                component: homecomp
+            }, {
+                path: '*',
+                component: homecomp
+            }]
+            const router = new VueRouter({
+                routes,
+                mode: 'history' 
+            })
+
+            var app = new Vue({
+                router,
+                el: '#app',
+                    data: {
+
+                        bots: [/*{
+                            name: 'Waterwerse',
+                            token: 'sdasdsaasd'
+                        }, {
+                            name: 'FearTehPig',
+                            token: 'dass'
+                        }, {
+                            name: 'Stijn0907',
+                            token: 'dass'
+                        }*/],
+                        message: 'Hello Vue!'
+                    },
+
+                    	  created() {
+    						this.isAuthenticated = isAuthenticated
+    						this.username = router.app.$route.params.username
+    						this.getusername = getusername
+  
+                    }
+            })
+        </script>
+
+</body>
+
+</html>

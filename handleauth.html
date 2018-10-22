@@ -1,0 +1,42 @@
+<!doctype html5>
+<html>
+<head>
+	<script src="https://cdn.auth0.com/js/auth0/9.5.1/auth0.min.js"></script>
+<script src="templates/authutils.js"></script>
+<script>
+
+handleAuthentication()
+
+
+setTimeout(function(){ 
+if (isAuthenticated()) {
+window.location.replace("https://botpanel.feroxmc.ga");
+console.log("authged");
+} else{
+window.location.replace("https://botpanel.feroxmc.ga/login");
+console.log("not");
+}
+
+
+}, 3000);
+
+
+</script>
+
+</head>
+<body>
+<span class="midtext">
+Redirecting...
+
+</span>
+<style>
+.midtext{
+	padding-top: 50%
+	padding-left: 50%;
+}
+
+
+</style>
+	</body>
+
+</html>
